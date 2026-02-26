@@ -1,1 +1,58 @@
-index
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rometrics Clinical Simulator</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; }
+        #hud-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 300px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #0056b3;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        h2 { margin: 0 0 10px 0; color: #333; font-size: 16px; }
+        .data-point { font-size: 14px; margin-bottom: 5px; color: #555; }
+    </style>
+</head>
+<body>
+    <div id="hud-panel">
+        <h2>Patient Digital Chart</h2>
+        <div class="data-point"><strong>Name:</strong> John Doe</div>
+        <div class="data-point"><strong>Diagnosis:</strong> Pending Assessment</div>
+        <div class="data-point"><strong>Isolation:</strong> TBD</div>
+    </div>
+    <script type="module">
+        import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+        import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/loaders/GLTFLoader.js';
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 5, 5);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0x404040));
+
+        const loader = new GLTFLoader();
+        loader.load('https://raw.githubusercontent.com/Kingto89/ClinicaRN/main/Short_Stay_Observation_Bay.glb', (gltf) => {
+            scene.add(gltf.scene);
+        });
+
+        camera.position.z = 5;
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
