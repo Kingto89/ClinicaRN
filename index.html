@@ -10,7 +10,6 @@
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
     html,body{height:100%;width:100%;overflow:hidden;background:#f5f0e8;font-family:'Inter',system-ui,sans-serif}
     #map{position:absolute;inset:0;}
-
     #panel{
       position:fixed;bottom:0;left:0;right:0;height:44%;background:#fff;
       border-radius:28px 28px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,0.08);
@@ -25,7 +24,6 @@
       scrollbar-width:none;-webkit-overflow-scrolling:touch;flex:1;align-items:flex-start;
     }
     #card-row::-webkit-scrollbar{display:none}
-
     .vcard{
       flex-shrink:0;width:260px;background:#faf6f0;border-radius:18px;
       overflow:hidden;display:flex;cursor:pointer;border:1px solid #ede8df;transition:transform .15s;
@@ -38,7 +36,6 @@
     .vcard-name{font-family:'Playfair Display',serif;font-size:15px;line-height:1.25;color:#1a1208;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .vcard-stars{font-size:12px;letter-spacing:1px;margin-top:1px}
     .vcard-more{font-size:11.5px;font-weight:500;color:#C45C10;margin-top:5px;}
-
     #detail{
       position:fixed;inset:0;z-index:50;background:rgba(30,20,10,0.45);
       display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .28s;
@@ -62,7 +59,6 @@
     #det-stars{font-size:15px;letter-spacing:2px;margin-bottom:8px;min-height:20px}
     #det-desc{font-size:13px;line-height:1.7;color:#9a8870;font-weight:300}
     #det-addr{font-size:12px;color:#b0a090;margin-top:6px;}
-
     .mapboxgl-ctrl-bottom-left,.mapboxgl-ctrl-bottom-right,.mapboxgl-ctrl-top-right{display:none!important}
   </style>
 </head>
@@ -102,20 +98,13 @@
     bearing: -10
   });
 
-  async function loadJSON(url) { const r = await fetch(url); return r.json(); }
-
-  function getRating(p) {
-    const v = Number(p.rating ?? p.stars ?? 0);
-    return v > 5 ? Math.round(v / 20) : Math.round(v);
-  }
   function starsHTML(n) {
     if (!n) return '';
     const f = Math.min(5, Math.max(0, n));
     return `<span style="color:#B8860B">${'★'.repeat(f)}</span><span style="color:#ddd5c8">${'★'.repeat(5 - f)}</span>`;
   }
 
-  function addCard(p, catLabel, catColor) {
-    const rating = getRating(p);
+  function addCard(name, desc, addr, catLabel, catColor) {
     const card = document.createElement('div');
     card.className = 'vcard';
     card.innerHTML = `
@@ -124,21 +113,20 @@
       </div>
       <div class="vcard-body">
         <div class="vcard-cat" style="color:${catColor}">${catLabel}</div>
-        <div class="vcard-name">${p.name || 'Unnamed'}</div>
-        ${rating ? `<div class="vcard-stars">${starsHTML(rating)}</div>` : ''}
+        <div class="vcard-name">${name}</div>
         <div class="vcard-more">See more</div>
       </div>`;
-    card.addEventListener('click', () => openDet(p, catLabel, catColor));
+    card.addEventListener('click', () => openDet(name, desc, addr, catLabel, catColor));
     document.getElementById('card-row').appendChild(card);
   }
 
-  function openDet(p, catLabel, catColor) {
+  function openDet(name, desc, addr, catLabel, catColor) {
     document.getElementById('det-cat').style.color = catColor;
     document.getElementById('det-cat').textContent  = catLabel;
-    document.getElementById('det-name').textContent = p.name || 'Unnamed';
-    document.getElementById('det-stars').innerHTML  = starsHTML(getRating(p));
-    document.getElementById('det-desc').textContent = p.description || p.desc || '';
-    document.getElementById('det-addr').textContent = p.address || '';
+    document.getElementById('det-name').textContent = name;
+    document.getElementById('det-stars').innerHTML  = '';
+    document.getElementById('det-desc').textContent = desc;
+    document.getElementById('det-addr').textContent = addr;
     document.getElementById('detail').classList.add('open');
   }
 
@@ -147,57 +135,81 @@
       document.getElementById('detail').classList.remove('open');
   };
 
-  map.on('load', async () => {
-    const [restaurants, hotels_budget, hotels_mid, hotels_luxury, services, tours] = await Promise.all([
-      loadJSON('ochorios_restaurants.geojson'),
-      loadJSON('ochorios_hotels_budget.geojson'),
-      loadJSON('ochorios_hotels_mid.geojson'),
-      loadJSON('ochorios_hotels_luxury.geojson'),
-      loadJSON('ochorios_services.geojson'),
-      loadJSON('ochorios_tours.geojson')
-    ]).catch(() => []);
+  map.on('load', () => {
 
-    if (restaurants) {
-      map.addSource('restaurants', { type: 'geojson', data: restaurants });
-      map.addLayer({ id: 'restaurants-buildings', type: 'fill-extrusion', source: 'restaurants', paint: { 'fill-extrusion-color': '#E8610A', 'fill-extrusion-height': 22, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 0.9 } });
-      map.on('click', 'restaurants-buildings', e => openDet(e.features[0].properties, 'Dining', '#E8610A'));
-      restaurants.features.forEach(f => addCard(f.properties, 'Dining', '#E8610A'));
-    }
+    // ─── DINING ──────────────────────────────────────────────────────────────
 
-    if (hotels_budget) {
-      map.addSource('hotels_budget', { type: 'geojson', data: hotels_budget });
-      map.addLayer({ id: 'hotels-budget-buildings', type: 'fill-extrusion', source: 'hotels_budget', paint: { 'fill-extrusion-color': '#4CAF50', 'fill-extrusion-height': 25, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 0.9 } });
-      map.on('click', 'hotels-budget-buildings', e => openDet(e.features[0].properties, 'Budget Hotel', '#4CAF50'));
-      hotels_budget.features.forEach(f => addCard(f.properties, 'Budget Hotel', '#4CAF50'));
-    }
+    map.addSource('restaurant-1', {
+      type: 'geojson',
+      data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[
+        [-77.101403, 18.410652], [-77.101369, 18.410592], [-77.101344, 18.410552],
+        [-77.101194, 18.410636], [-77.101251, 18.410733], [-77.101403, 18.410652]
+      ]] } }
+    });
+    map.addLayer({ id: 'restaurant-1-layer', type: 'fill-extrusion', source: 'restaurant-1',
+      paint: { 'fill-extrusion-color': '#E8610A', 'fill-extrusion-height': 22, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 }
+    });
+    map.on('click', 'restaurant-1-layer', () => openDet('Restaurant 1', '', '', 'Dining', '#E8610A'));
+    addCard('Restaurant 1', '', '', 'Dining', '#E8610A');
 
-    if (hotels_mid) {
-      map.addSource('hotels_mid', { type: 'geojson', data: hotels_mid });
-      map.addLayer({ id: 'hotels-mid-buildings', type: 'fill-extrusion', source: 'hotels_mid', paint: { 'fill-extrusion-color': '#FFB300', 'fill-extrusion-height': 30, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 0.9 } });
-      map.on('click', 'hotels-mid-buildings', e => openDet(e.features[0].properties, 'Mid-Range Hotel', '#FFB300'));
-      hotels_mid.features.forEach(f => addCard(f.properties, 'Mid-Range Hotel', '#FFB300'));
-    }
+    map.addSource('restaurant-2', {
+      type: 'geojson',
+      data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[
+        [-77.101174, 18.41064], [-77.101105, 18.410509], [-77.101006, 18.410551],
+        [-77.101079, 18.410683], [-77.101174, 18.41064]
+      ]] } }
+    });
+    map.addLayer({ id: 'restaurant-2-layer', type: 'fill-extrusion', source: 'restaurant-2',
+      paint: { 'fill-extrusion-color': '#E8610A', 'fill-extrusion-height': 22, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 }
+    });
+    map.on('click', 'restaurant-2-layer', () => openDet('Restaurant 2', '', '', 'Dining', '#E8610A'));
+    addCard('Restaurant 2', '', '', 'Dining', '#E8610A');
 
-    if (hotels_luxury) {
-      map.addSource('hotels_luxury', { type: 'geojson', data: hotels_luxury });
-      map.addLayer({ id: 'hotels-luxury-buildings', type: 'fill-extrusion', source: 'hotels_luxury', paint: { 'fill-extrusion-color': '#9C27B0', 'fill-extrusion-height': 40, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 0.9 } });
-      map.on('click', 'hotels-luxury-buildings', e => openDet(e.features[0].properties, 'Luxury Hotel', '#9C27B0'));
-      hotels_luxury.features.forEach(f => addCard(f.properties, 'Luxury Hotel', '#9C27B0'));
-    }
+    map.addSource('restaurant-3', {
+      type: 'geojson',
+      data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[
+        [-77.105847, 18.41281], [-77.105825, 18.412626], [-77.105546, 18.412659],
+        [-77.105591, 18.412853], [-77.105847, 18.41281]
+      ]] } }
+    });
+    map.addLayer({ id: 'restaurant-3-layer', type: 'fill-extrusion', source: 'restaurant-3',
+      paint: { 'fill-extrusion-color': '#E8610A', 'fill-extrusion-height': 22, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 }
+    });
+    map.on('click', 'restaurant-3-layer', () => openDet('Restaurant 3', '', '', 'Dining', '#E8610A'));
+    addCard('Restaurant 3', '', '', 'Dining', '#E8610A');
 
-    if (services) {
-      map.addSource('services', { type: 'geojson', data: services });
-      map.addLayer({ id: 'services-buildings', type: 'fill-extrusion', source: 'services', paint: { 'fill-extrusion-color': '#2196F3', 'fill-extrusion-height': 18, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 0.9 } });
-      map.on('click', 'services-buildings', e => openDet(e.features[0].properties, 'Services', '#2196F3'));
-      services.features.forEach(f => addCard(f.properties, 'Services', '#2196F3'));
-    }
+    map.addSource('restaurant-4', {
+      type: 'geojson',
+      data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[
+        [-77.10562, 18.412858], [-77.105546, 18.412659], [-77.105495, 18.412669],
+        [-77.105495, 18.412605], [-77.105432, 18.412605], [-77.105432, 18.412491],
+        [-77.105568, 18.412464], [-77.105512, 18.412238], [-77.105364, 18.412308],
+        [-77.105125, 18.412318], [-77.105147, 18.412405], [-77.104988, 18.412437],
+        [-77.105045, 18.412659], [-77.105113, 18.412993], [-77.105347, 18.412993],
+        [-77.105625, 18.412972], [-77.10558, 18.412896], [-77.10562, 18.412858]
+      ]] } }
+    });
+    map.addLayer({ id: 'restaurant-4-layer', type: 'fill-extrusion', source: 'restaurant-4',
+      paint: { 'fill-extrusion-color': '#E8610A', 'fill-extrusion-height': 22, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 }
+    });
+    map.on('click', 'restaurant-4-layer', () => openDet('Restaurant 4', '', '', 'Dining', '#E8610A'));
+    addCard('Restaurant 4', '', '', 'Dining', '#E8610A');
 
-    if (tours) {
-      map.addSource('tours', { type: 'geojson', data: tours });
-      map.addLayer({ id: 'tours-buildings', type: 'fill-extrusion', source: 'tours', paint: { 'fill-extrusion-color': '#E91E8C', 'fill-extrusion-height': 22, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 0.9 } });
-      map.on('click', 'tours-buildings', e => openDet(e.features[0].properties, 'Tours & Attractions', '#E91E8C'));
-      tours.features.forEach(f => addCard(f.properties, 'Tours & Attractions', '#E91E8C'));
-    }
+    // ─── BUDGET HOTELS ───────────────────────────────────────────────────────
+    // Add budget hotel addSource/addLayer blocks here following the same pattern
+
+    // ─── MID-RANGE HOTELS ────────────────────────────────────────────────────
+    // Add mid hotel addSource/addLayer blocks here
+
+    // ─── LUXURY HOTELS ───────────────────────────────────────────────────────
+    // Add luxury hotel addSource/addLayer blocks here
+
+    // ─── SERVICES ────────────────────────────────────────────────────────────
+    // Add services addSource/addLayer blocks here
+
+    // ─── TOURS & ATTRACTIONS ─────────────────────────────────────────────────
+    // Add tours addSource/addLayer blocks here
+
   });
 </script>
 </body>
