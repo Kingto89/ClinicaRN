@@ -104,7 +104,7 @@
     return `<span style="color:#B8860B">${'★'.repeat(f)}</span><span style="color:#ddd5c8">${'★'.repeat(5 - f)}</span>`;
   }
 
-  function addCard(name, desc, addr, catLabel, catColor) {
+  function addCard(name, desc, addr, catLabel, catColor, stars) {
     const card = document.createElement('div');
     card.className = 'vcard';
     card.innerHTML = `
@@ -114,19 +114,20 @@
       <div class="vcard-body">
         <div class="vcard-cat" style="color:${catColor}">${catLabel}</div>
         <div class="vcard-name">${name}</div>
+        <div class="vcard-stars">${starsHTML(stars)}</div>
         <div class="vcard-more">See more</div>
       </div>`;
-    card.addEventListener('click', () => openDet(name, desc, addr, catLabel, catColor));
+    card.addEventListener('click', () => openDet(name, desc, addr, catLabel, catColor, stars));
     document.getElementById('card-row').appendChild(card);
   }
 
-  function openDet(name, desc, addr, catLabel, catColor) {
+  function openDet(name, desc, addr, catLabel, catColor, stars) {
     document.getElementById('det-cat').style.color = catColor;
     document.getElementById('det-cat').textContent  = catLabel;
     document.getElementById('det-name').textContent = name;
-    document.getElementById('det-stars').innerHTML  = '';
+    document.getElementById('det-stars').innerHTML  = starsHTML(stars);
     document.getElementById('det-desc').textContent = desc;
-    document.getElementById('det-addr').textContent = addr;
+    document.getElementById('det-addr').textContent = addr ? '📍 ' + addr : '';
     document.getElementById('detail').classList.add('open');
   }
 
@@ -149,8 +150,13 @@
     map.addLayer({ id: 'restaurant-1-layer', type: 'fill-extrusion', source: 'restaurant-1',
       paint: { 'fill-extrusion-color': '#E8610A', 'fill-extrusion-height': 22, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 }
     });
-    map.on('click', 'restaurant-1-layer', () => openDet('Restaurant 1', '', '', 'Dining', '#E8610A'));
-    addCard('Restaurant 1', '', '', 'Dining', '#E8610A');
+    map.on('click', 'restaurant-1-layer', () => openDet(
+      'Seaside Grill & Bar',
+      'Fresh catch of the day grilled to perfection right on the waterfront. Known for their jerk lobster and rum punch that hits different at sunset. Live reggae on Friday nights keeps the vibe going all evening.',
+      '12 Main Street, Ocho Rios', 'Dining', '#E8610A', 4));
+    addCard('Seaside Grill & Bar',
+      'Fresh catch of the day grilled to perfection right on the waterfront.',
+      '12 Main Street, Ocho Rios', 'Dining', '#E8610A', 4);
 
     map.addSource('restaurant-2', {
       type: 'geojson',
@@ -162,8 +168,13 @@
     map.addLayer({ id: 'restaurant-2-layer', type: 'fill-extrusion', source: 'restaurant-2',
       paint: { 'fill-extrusion-color': '#E8610A', 'fill-extrusion-height': 22, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 }
     });
-    map.on('click', 'restaurant-2-layer', () => openDet('Restaurant 2', '', '', 'Dining', '#E8610A'));
-    addCard('Restaurant 2', '', '', 'Dining', '#E8610A');
+    map.on('click', 'restaurant-2-layer', () => openDet(
+      'Bamboo Yard Eatery',
+      'Casual open-air spot loved by locals and tourists alike. Their oxtail stew and festival bread is the real deal — slow cooked from early morning. Best place to eat like a Jamaican without breaking the bank.',
+      '5 Bamboo Lane, Ocho Rios', 'Dining', '#E8610A', 5));
+    addCard('Bamboo Yard Eatery',
+      'Casual open-air spot loved by locals. Best oxtail stew in town.',
+      '5 Bamboo Lane, Ocho Rios', 'Dining', '#E8610A', 5);
 
     map.addSource('restaurant-3', {
       type: 'geojson',
@@ -175,8 +186,13 @@
     map.addLayer({ id: 'restaurant-3-layer', type: 'fill-extrusion', source: 'restaurant-3',
       paint: { 'fill-extrusion-color': '#E8610A', 'fill-extrusion-height': 22, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 }
     });
-    map.on('click', 'restaurant-3-layer', () => openDet('Restaurant 3', '', '', 'Dining', '#E8610A'));
-    addCard('Restaurant 3', '', '', 'Dining', '#E8610A');
+    map.on('click', 'restaurant-3-layer', () => openDet(
+      'Pepper Tree Kitchen',
+      'Wood-fired Jamaican cuisine with a modern twist. Their scotch bonnet glazed ribs and roasted breadfruit are fan favourites. Cosy indoor seating with breezy terrace views over the hills.',
+      '88 Pepper Hill Road, Ocho Rios', 'Dining', '#E8610A', 4));
+    addCard('Pepper Tree Kitchen',
+      'Wood-fired Jamaican cuisine with a modern twist and terrace views.',
+      '88 Pepper Hill Road, Ocho Rios', 'Dining', '#E8610A', 4);
 
     map.addSource('restaurant-4', {
       type: 'geojson',
@@ -192,121 +208,243 @@
     map.addLayer({ id: 'restaurant-4-layer', type: 'fill-extrusion', source: 'restaurant-4',
       paint: { 'fill-extrusion-color': '#E8610A', 'fill-extrusion-height': 22, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 }
     });
-    map.on('click', 'restaurant-4-layer', () => openDet('Restaurant 4', '', '', 'Dining', '#E8610A'));
-    addCard('Restaurant 4', '', '', 'Dining', '#E8610A');
+    map.on('click', 'restaurant-4-layer', () => openDet(
+      'Island Spice Cafe',
+      'A beloved breakfast and brunch destination serving ackee & saltfish, callaloo omelettes, and freshly squeezed soursop juice. Quick, friendly service and a shaded courtyard perfect for lazy mornings.',
+      '21 Coral Cove Drive, Ocho Rios', 'Dining', '#E8610A', 5));
+    addCard('Island Spice Cafe',
+      'Beloved breakfast spot — ackee & saltfish, callaloo, soursop juice.',
+      '21 Coral Cove Drive, Ocho Rios', 'Dining', '#E8610A', 5);
 
     // ─── BUDGET HOTELS ───────────────────────────────────────────────────────
 
     map.addSource('hotel-budget-1', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.10672,18.40758],[-77.106424,18.407155],[-77.106347,18.407205],[-77.106439,18.407377],[-77.106154,18.407558],[-77.106192,18.407601],[-77.106223,18.407593],[-77.106253,18.407656],[-77.1063,18.407645],[-77.106411,18.407848],[-77.106532,18.407873],[-77.106384,18.40767],[-77.106569,18.407558],[-77.106624,18.407647],[-77.10672,18.40758]]] } } });
     map.addLayer({ id: 'hotel-budget-1-layer', type: 'fill-extrusion', source: 'hotel-budget-1', paint: { 'fill-extrusion-color': '#4CAF50', 'fill-extrusion-height': 25, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-budget-1-layer', () => openDet('Budget Hotel 1', '', '', 'Budget Hotel', '#4CAF50'));
-    addCard('Budget Hotel 1', '', '', 'Budget Hotel', '#4CAF50');
+    map.on('click', 'hotel-budget-1-layer', () => openDet(
+      'Sunrise Inn',
+      'Simple, clean rooms just a 5-minute walk from the beach. Free Wi-Fi, ceiling fans, and a communal kitchen. The owners are incredibly welcoming and always have local tips ready. A solid pick if you\'re keeping costs down.',
+      '3 Sunrise Alley, Ocho Rios', 'Budget Hotel', '#4CAF50', 3));
+    addCard('Sunrise Inn',
+      'Clean rooms, free Wi-Fi, 5 min walk to the beach.',
+      '3 Sunrise Alley, Ocho Rios', 'Budget Hotel', '#4CAF50', 3);
 
     map.addSource('hotel-budget-2', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.106295,18.406935],[-77.105859,18.407164],[-77.106047,18.407497],[-77.106131,18.407457],[-77.106029,18.407283],[-77.106146,18.407219],[-77.106106,18.407167],[-77.106168,18.407129],[-77.106209,18.407205],[-77.106401,18.407102],[-77.106295,18.406935]]] } } });
     map.addLayer({ id: 'hotel-budget-2-layer', type: 'fill-extrusion', source: 'hotel-budget-2', paint: { 'fill-extrusion-color': '#4CAF50', 'fill-extrusion-height': 25, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-budget-2-layer', () => openDet('Budget Hotel 2', '', '', 'Budget Hotel', '#4CAF50'));
-    addCard('Budget Hotel 2', '', '', 'Budget Hotel', '#4CAF50');
+    map.on('click', 'hotel-budget-2-layer', () => openDet(
+      'Palm Breeze Guesthouse',
+      'Family-run guesthouse with six cosy en-suite rooms and a shared balcony with garden views. Breakfast is included — fresh fruit, hard-dough bread, and Blue Mountain coffee. Quiet neighbourhood, easy taxi access.',
+      '17 Garden View Road, Ocho Rios', 'Budget Hotel', '#4CAF50', 4));
+    addCard('Palm Breeze Guesthouse',
+      'Family-run, breakfast included, Blue Mountain coffee every morning.',
+      '17 Garden View Road, Ocho Rios', 'Budget Hotel', '#4CAF50', 4);
 
     map.addSource('hotel-budget-3', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.105968,18.407659],[-77.105903,18.407748],[-77.105954,18.407778],[-77.105868,18.407947],[-77.105813,18.407924],[-77.105769,18.407999],[-77.106138,18.408189],[-77.106177,18.408096],[-77.106098,18.408054],[-77.106181,18.407887],[-77.106319,18.407957],[-77.106174,18.408212],[-77.106255,18.408256],[-77.106349,18.408199],[-77.106442,18.408003],[-77.106423,18.407907],[-77.106292,18.407827],[-77.105968,18.407659]]] } } });
     map.addLayer({ id: 'hotel-budget-3-layer', type: 'fill-extrusion', source: 'hotel-budget-3', paint: { 'fill-extrusion-color': '#4CAF50', 'fill-extrusion-height': 25, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-budget-3-layer', () => openDet('Budget Hotel 3', '', '', 'Budget Hotel', '#4CAF50'));
-    addCard('Budget Hotel 3', '', '', 'Budget Hotel', '#4CAF50');
+    map.on('click', 'hotel-budget-3-layer', () => openDet(
+      'Mango Tree Hostel',
+      'Popular backpacker hostel with dorm beds and private pods. Social rooftop terrace, free lockers, and weekly rum punch nights. Great spot to meet fellow travellers heading to Dunn\'s River Falls.',
+      '44 Mango Way, Ocho Rios', 'Budget Hotel', '#4CAF50', 3));
+    addCard('Mango Tree Hostel',
+      'Backpacker favourite — rooftop terrace and weekly rum punch nights.',
+      '44 Mango Way, Ocho Rios', 'Budget Hotel', '#4CAF50', 3);
 
     map.addSource('hotel-budget-4', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.10594,18.407516],[-77.10559,18.407361],[-77.105349,18.407784],[-77.105682,18.407946],[-77.105786,18.407781],[-77.105697,18.407738],[-77.105621,18.407861],[-77.105491,18.407812],[-77.105658,18.407563],[-77.105838,18.407653],[-77.105862,18.407606],[-77.105904,18.407624],[-77.10594,18.407516]]] } } });
     map.addLayer({ id: 'hotel-budget-4-layer', type: 'fill-extrusion', source: 'hotel-budget-4', paint: { 'fill-extrusion-color': '#4CAF50', 'fill-extrusion-height': 25, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-budget-4-layer', () => openDet('Budget Hotel 4', '', '', 'Budget Hotel', '#4CAF50'));
-    addCard('Budget Hotel 4', '', '', 'Budget Hotel', '#4CAF50');
+    map.on('click', 'hotel-budget-4-layer', () => openDet(
+      'Cool Breeze Lodge',
+      'No-frills lodge steps from the town centre. Air-conditioned rooms, private bathrooms, and a small pool that stays surprisingly cool all day. Perfect base for day trips without spending a fortune on accommodation.',
+      '9 Harbour Street, Ocho Rios', 'Budget Hotel', '#4CAF50', 3));
+    addCard('Cool Breeze Lodge',
+      'No-frills AC rooms, private bathrooms, and a cool small pool.',
+      '9 Harbour Street, Ocho Rios', 'Budget Hotel', '#4CAF50', 3);
 
     // ─── MID-RANGE HOTELS ────────────────────────────────────────────────────
 
     map.addSource('hotel-mid-1', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.104149,18.4095],[-77.10401,18.40954],[-77.103996,18.409553],[-77.104052,18.409668],[-77.104228,18.409622],[-77.104149,18.4095]]] } } });
     map.addLayer({ id: 'hotel-mid-1-layer', type: 'fill-extrusion', source: 'hotel-mid-1', paint: { 'fill-extrusion-color': '#FFB300', 'fill-extrusion-height': 30, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-mid-1-layer', () => openDet('Mid-Range Hotel 1', '', '', 'Mid-Range Hotel', '#FFB300'));
-    addCard('Mid-Range Hotel 1', '', '', 'Mid-Range Hotel', '#FFB300');
+    map.on('click', 'hotel-mid-1-layer', () => openDet(
+      'Hibiscus Bay Hotel',
+      'Well-appointed hotel with ocean-facing rooms, a swim-up bar, and daily breakfast buffet. Friendly staff, reliable air conditioning, and a shuttle service to local attractions. Popular with couples and families alike.',
+      '32 Hibiscus Drive, Ocho Rios', 'Mid-Range Hotel', '#FFB300', 4));
+    addCard('Hibiscus Bay Hotel',
+      'Ocean-facing rooms, swim-up bar, daily breakfast buffet.',
+      '32 Hibiscus Drive, Ocho Rios', 'Mid-Range Hotel', '#FFB300', 4);
 
     map.addSource('hotel-mid-2', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.104011,18.409573],[-77.103829,18.409615],[-77.103928,18.409916],[-77.104094,18.409869],[-77.104027,18.409678],[-77.104011,18.409573]]] } } });
     map.addLayer({ id: 'hotel-mid-2-layer', type: 'fill-extrusion', source: 'hotel-mid-2', paint: { 'fill-extrusion-color': '#FFB300', 'fill-extrusion-height': 30, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-mid-2-layer', () => openDet('Mid-Range Hotel 2', '', '', 'Mid-Range Hotel', '#FFB300'));
-    addCard('Mid-Range Hotel 2', '', '', 'Mid-Range Hotel', '#FFB300');
+    map.on('click', 'hotel-mid-2-layer', () => openDet(
+      'Coconut Cove Resort',
+      'Boutique resort set in lush tropical gardens with a stunning outdoor pool. Rooms feature private patios, rainfall showers, and bamboo furnishings. On-site restaurant serves Jamaican and international cuisine nightly.',
+      '7 Cove Road, Ocho Rios', 'Mid-Range Hotel', '#FFB300', 4));
+    addCard('Coconut Cove Resort',
+      'Boutique resort, tropical gardens, stunning pool and private patios.',
+      '7 Cove Road, Ocho Rios', 'Mid-Range Hotel', '#FFB300', 4);
 
     map.addSource('hotel-mid-3', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.103967,18.4095],[-77.10394,18.409407],[-77.103882,18.409417],[-77.103931,18.409575],[-77.104028,18.409542],[-77.104008,18.409491],[-77.103967,18.4095]]] } } });
     map.addLayer({ id: 'hotel-mid-3-layer', type: 'fill-extrusion', source: 'hotel-mid-3', paint: { 'fill-extrusion-color': '#FFB300', 'fill-extrusion-height': 30, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-mid-3-layer', () => openDet('Mid-Range Hotel 3', '', '', 'Mid-Range Hotel', '#FFB300'));
-    addCard('Mid-Range Hotel 3', '', '', 'Mid-Range Hotel', '#FFB300');
+    map.on('click', 'hotel-mid-3-layer', () => openDet(
+      'Trident Suites',
+      'Spacious suites with kitchenettes, ideal for extended stays or families wanting extra space. Rooftop terrace with panoramic views of the bay. Gym, spa treatments available on request, and free parking.',
+      '55 Trident Avenue, Ocho Rios', 'Mid-Range Hotel', '#FFB300', 4));
+    addCard('Trident Suites',
+      'Spacious suites with kitchenettes, rooftop bay views and gym.',
+      '55 Trident Avenue, Ocho Rios', 'Mid-Range Hotel', '#FFB300', 4);
 
     map.addSource('hotel-mid-4', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.103826,18.409386],[-77.10381,18.409313],[-77.103711,18.409332],[-77.103725,18.409407],[-77.103774,18.409403],[-77.103828,18.409609],[-77.103906,18.409585],[-77.10386,18.409367],[-77.103826,18.409386]]] } } });
     map.addLayer({ id: 'hotel-mid-4-layer', type: 'fill-extrusion', source: 'hotel-mid-4', paint: { 'fill-extrusion-color': '#FFB300', 'fill-extrusion-height': 30, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-mid-4-layer', () => openDet('Mid-Range Hotel 4', '', '', 'Mid-Range Hotel', '#FFB300'));
-    addCard('Mid-Range Hotel 4', '', '', 'Mid-Range Hotel', '#FFB300');
+    map.on('click', 'hotel-mid-4-layer', () => openDet(
+      'Blue Lagoon Inn',
+      'Charming inn perched above the coastline with breathtaking sunset views. Each room is individually decorated with local art. The inn\'s bar is famous for its homemade ginger beer and rum cocktail menu.',
+      '19 Blue Lagoon Lane, Ocho Rios', 'Mid-Range Hotel', '#FFB300', 5));
+    addCard('Blue Lagoon Inn',
+      'Charming inn, local art décor, famous ginger beer rum cocktails.',
+      '19 Blue Lagoon Lane, Ocho Rios', 'Mid-Range Hotel', '#FFB300', 5);
 
     map.addSource('hotel-mid-5', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.103754,18.409629],[-77.10372,18.409637],[-77.103848,18.409949],[-77.103911,18.409905],[-77.103817,18.409605],[-77.103754,18.409629]]] } } });
     map.addLayer({ id: 'hotel-mid-5-layer', type: 'fill-extrusion', source: 'hotel-mid-5', paint: { 'fill-extrusion-color': '#FFB300', 'fill-extrusion-height': 30, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-mid-5-layer', () => openDet('Mid-Range Hotel 5', '', '', 'Mid-Range Hotel', '#FFB300'));
-    addCard('Mid-Range Hotel 5', '', '', 'Mid-Range Hotel', '#FFB300');
+    map.on('click', 'hotel-mid-5-layer', () => openDet(
+      'Papaya Garden Hotel',
+      'Relaxed, adults-friendly hotel tucked into a hillside garden setting. Six room categories including ocean view and garden suite. Evening entertainment includes steel pan music and local craft markets.',
+      '3 Papaya Hill, Ocho Rios', 'Mid-Range Hotel', '#FFB300', 4));
+    addCard('Papaya Garden Hotel',
+      'Hillside garden setting, steel pan evenings, adults-friendly.',
+      '3 Papaya Hill, Ocho Rios', 'Mid-Range Hotel', '#FFB300', 4);
 
     // ─── LUXURY HOTELS ───────────────────────────────────────────────────────
 
     map.addSource('hotel-luxury-1', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.109295,18.407622],[-77.109264,18.407642],[-77.109249,18.40762],[-77.109164,18.407678],[-77.109274,18.4078],[-77.109248,18.407816],[-77.109279,18.407839],[-77.109317,18.407913],[-77.109401,18.407855],[-77.109379,18.407824],[-77.109404,18.407808],[-77.10935,18.407741],[-77.109295,18.407664],[-77.109295,18.407622]]] } } });
     map.addLayer({ id: 'hotel-luxury-1-layer', type: 'fill-extrusion', source: 'hotel-luxury-1', paint: { 'fill-extrusion-color': '#9C27B0', 'fill-extrusion-height': 40, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-luxury-1-layer', () => openDet('Luxury Hotel 1', '', '', 'Luxury Hotel', '#9C27B0'));
-    addCard('Luxury Hotel 1', '', '', 'Luxury Hotel', '#9C27B0');
+    map.on('click', 'hotel-luxury-1-layer', () => openDet(
+      'Royal Palms Estate',
+      'Five-star all-inclusive resort with private beach access, three infinity pools, and a world-class spa. Each villa features butler service, outdoor rain showers, and personal concierge. Michelin-trained chefs oversee four on-site restaurants.',
+      '1 Royal Palms Boulevard, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5));
+    addCard('Royal Palms Estate',
+      'Five-star all-inclusive, private beach, butler service, four restaurants.',
+      '1 Royal Palms Boulevard, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5);
 
     map.addSource('hotel-luxury-2', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.109388,18.407876],[-77.1093,18.407937],[-77.109346,18.408],[-77.109433,18.407936],[-77.109388,18.407876]]] } } });
     map.addLayer({ id: 'hotel-luxury-2-layer', type: 'fill-extrusion', source: 'hotel-luxury-2', paint: { 'fill-extrusion-color': '#9C27B0', 'fill-extrusion-height': 40, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-luxury-2-layer', () => openDet('Luxury Hotel 2', '', '', 'Luxury Hotel', '#9C27B0'));
-    addCard('Luxury Hotel 2', '', '', 'Luxury Hotel', '#9C27B0');
+    map.on('click', 'hotel-luxury-2-layer', () => openDet(
+      'The Grand Horizon',
+      'Iconic cliffside resort offering panoramic Caribbean views from every room. Features a 200-metre private pier, deep-sea fishing excursions, helicopter transfers from Kingston, and a signature cocktail lounge open until 3am.',
+      '2 Grand Horizon Drive, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5));
+    addCard('The Grand Horizon',
+      'Cliffside resort, private pier, helicopter transfers, cocktail lounge.',
+      '2 Grand Horizon Drive, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5);
 
     map.addSource('hotel-luxury-3', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.109404,18.407966],[-77.109322,18.408023],[-77.109346,18.408051],[-77.109324,18.408066],[-77.109365,18.408115],[-77.109449,18.408052],[-77.109434,18.408031],[-77.109448,18.408021],[-77.109404,18.407966]]] } } });
     map.addLayer({ id: 'hotel-luxury-3-layer', type: 'fill-extrusion', source: 'hotel-luxury-3', paint: { 'fill-extrusion-color': '#9C27B0', 'fill-extrusion-height': 40, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-luxury-3-layer', () => openDet('Luxury Hotel 3', '', '', 'Luxury Hotel', '#9C27B0'));
-    addCard('Luxury Hotel 3', '', '', 'Luxury Hotel', '#9C27B0');
+    map.on('click', 'hotel-luxury-3-layer', () => openDet(
+      'Serenity at the Cove',
+      'Adults-only boutique luxury retreat with just 24 suites, ensuring an intimate and exclusive experience. Yoga pavilion, holistic spa, daily snorkelling at the private reef, and a curated local rum tasting every Thursday.',
+      '8 Serenity Cove, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5));
+    addCard('Serenity at the Cove',
+      'Adults-only boutique, 24 suites, private reef snorkelling, rum tasting.',
+      '8 Serenity Cove, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5);
 
     map.addSource('hotel-luxury-4', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.109436,18.408069],[-77.109366,18.408121],[-77.109391,18.408145],[-77.109382,18.40815],[-77.109475,18.408252],[-77.109558,18.408184],[-77.109515,18.408135],[-77.109503,18.408145],[-77.109464,18.408096],[-77.109473,18.40809],[-77.109449,18.408063],[-77.109441,18.408075],[-77.109436,18.408069]]] } } });
     map.addLayer({ id: 'hotel-luxury-4-layer', type: 'fill-extrusion', source: 'hotel-luxury-4', paint: { 'fill-extrusion-color': '#9C27B0', 'fill-extrusion-height': 40, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-luxury-4-layer', () => openDet('Luxury Hotel 4', '', '', 'Luxury Hotel', '#9C27B0'));
-    addCard('Luxury Hotel 4', '', '', 'Luxury Hotel', '#9C27B0');
+    map.on('click', 'hotel-luxury-4-layer', () => openDet(
+      'Emerald Isle Manor',
+      'Historic plantation-era manor converted into an ultra-luxury 18-room hotel. Original mahogany furniture, curated antiques, and estate-grown organic produce served at the farm-to-table restaurant. A truly one-of-a-kind experience.',
+      '14 Manor Estate Road, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5));
+    addCard('Emerald Isle Manor',
+      'Historic plantation manor, antiques, farm-to-table restaurant.',
+      '14 Manor Estate Road, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5);
 
     map.addSource('hotel-luxury-5', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.109575,18.408176],[-77.109496,18.408238],[-77.109554,18.408301],[-77.109632,18.408242],[-77.109575,18.408176]]] } } });
     map.addLayer({ id: 'hotel-luxury-5-layer', type: 'fill-extrusion', source: 'hotel-luxury-5', paint: { 'fill-extrusion-color': '#9C27B0', 'fill-extrusion-height': 40, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-luxury-5-layer', () => openDet('Luxury Hotel 5', '', '', 'Luxury Hotel', '#9C27B0'));
-    addCard('Luxury Hotel 5', '', '', 'Luxury Hotel', '#9C27B0');
+    map.on('click', 'hotel-luxury-5-layer', () => openDet(
+      'Azure Sky Villas',
+      'Standalone overwater-style villas positioned at the water\'s edge, each with a private plunge pool and glass floor panels. Complimentary sunset cruises, water sports equipment, and a dedicated lifestyle manager.',
+      '20 Azure Promenade, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5));
+    addCard('Azure Sky Villas',
+      'Waterfront villas, private plunge pools, complimentary sunset cruises.',
+      '20 Azure Promenade, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5);
 
     map.addSource('hotel-luxury-6', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.109598,18.408273],[-77.109612,18.408291],[-77.109688,18.408234],[-77.109672,18.408216],[-77.109598,18.408273]]] } } });
     map.addLayer({ id: 'hotel-luxury-6-layer', type: 'fill-extrusion', source: 'hotel-luxury-6', paint: { 'fill-extrusion-color': '#9C27B0', 'fill-extrusion-height': 40, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-luxury-6-layer', () => openDet('Luxury Hotel 6', '', '', 'Luxury Hotel', '#9C27B0'));
-    addCard('Luxury Hotel 6', '', '', 'Luxury Hotel', '#9C27B0');
+    map.on('click', 'hotel-luxury-6-layer', () => openDet(
+      'Coral Peak Residences',
+      'Exclusive residential-style suites rented on a nightly basis. Full concierge, private chef available on request, and in-suite spa treatments. Preferred by celebrities and VIPs seeking privacy without sacrificing amenities.',
+      '6 Coral Peak, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5));
+    addCard('Coral Peak Residences',
+      'VIP-exclusive suites, private chef, in-suite spa on request.',
+      '6 Coral Peak, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5);
 
     map.addSource('hotel-luxury-7', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.109706,18.408229],[-77.109616,18.408289],[-77.109648,18.408333],[-77.109737,18.408272],[-77.109706,18.408229]]] } } });
     map.addLayer({ id: 'hotel-luxury-7-layer', type: 'fill-extrusion', source: 'hotel-luxury-7', paint: { 'fill-extrusion-color': '#9C27B0', 'fill-extrusion-height': 40, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-luxury-7-layer', () => openDet('Luxury Hotel 7', '', '', 'Luxury Hotel', '#9C27B0'));
-    addCard('Luxury Hotel 7', '', '', 'Luxury Hotel', '#9C27B0');
+    map.on('click', 'hotel-luxury-7-layer', () => openDet(
+      'The Sapphire Collection',
+      'Design-forward luxury hotel inspired by Jamaican cultural heritage. Curated gallery spaces, rooftop restaurant with tasting menus, and an underground jazz club. Guests receive personalised cultural immersion itineraries on arrival.',
+      '11 Sapphire Row, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5));
+    addCard('The Sapphire Collection',
+      'Design-forward, gallery spaces, underground jazz club, tasting menus.',
+      '11 Sapphire Row, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5);
 
     map.addSource('hotel-luxury-8', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.109943,18.408219],[-77.109885,18.408237],[-77.109861,18.408307],[-77.109867,18.408328],[-77.109918,18.408336],[-77.109943,18.408219]]] } } });
     map.addLayer({ id: 'hotel-luxury-8-layer', type: 'fill-extrusion', source: 'hotel-luxury-8', paint: { 'fill-extrusion-color': '#9C27B0', 'fill-extrusion-height': 40, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-luxury-8-layer', () => openDet('Luxury Hotel 8', '', '', 'Luxury Hotel', '#9C27B0'));
-    addCard('Luxury Hotel 8', '', '', 'Luxury Hotel', '#9C27B0');
+    map.on('click', 'hotel-luxury-8-layer', () => openDet(
+      'Moonrise Terrace Hotel',
+      'Perched on a natural limestone terrace, this award-winning hotel offers unobstructed sea views from every suite. Features a saltwater infinity pool, weekly fire-dance performances, and an artisan cocktail programme sourced entirely from Jamaican botanicals.',
+      '29 Moonrise Terrace, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5));
+    addCard('Moonrise Terrace Hotel',
+      'Award-winning, saltwater infinity pool, fire-dance, Jamaican cocktails.',
+      '29 Moonrise Terrace, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5);
 
     map.addSource('hotel-luxury-9', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.109763,18.408269],[-77.109716,18.408294],[-77.109809,18.408345],[-77.109801,18.40836],[-77.109816,18.408389],[-77.109845,18.408372],[-77.109853,18.40839],[-77.10988,18.408374],[-77.109872,18.408355],[-77.109925,18.408343],[-77.10986,18.408333],[-77.109852,18.408301],[-77.10983,18.408305],[-77.109763,18.408269]]] } } });
     map.addLayer({ id: 'hotel-luxury-9-layer', type: 'fill-extrusion', source: 'hotel-luxury-9', paint: { 'fill-extrusion-color': '#9C27B0', 'fill-extrusion-height': 40, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'hotel-luxury-9-layer', () => openDet('Luxury Hotel 9', '', '', 'Luxury Hotel', '#9C27B0'));
-    addCard('Luxury Hotel 9', '', '', 'Luxury Hotel', '#9C27B0');
+    map.on('click', 'hotel-luxury-9-layer', () => openDet(
+      'Paradise Point Club',
+      'Members-preferred private club hotel offering the highest staff-to-guest ratio in Ocho Rios. Legendary afternoon tea service, private film screening room, a curated cellar of 400+ Caribbean rums, and 24-hour Rolls-Royce transfers.',
+      '1 Paradise Point, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5));
+    addCard('Paradise Point Club',
+      'Members-preferred, Rolls-Royce transfers, 400+ rum cellar, film room.',
+      '1 Paradise Point, Ocho Rios', 'Luxury Hotel', '#9C27B0', 5);
+
+    // ─── MOM'S FOOD ──────────────────────────────────────────────────────────
+
+    map.addSource('moms-food', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.101900,18.409320],[-77.101820,18.409180],[-77.101700,18.409240],[-77.101780,18.409380],[-77.101900,18.409320]]] } } });
+    map.addLayer({ id: 'moms-food-layer', type: 'fill-extrusion', source: 'moms-food', paint: { 'fill-extrusion-color': '#D81B60', 'fill-extrusion-height': 20, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
+    map.on('click', 'moms-food-layer', () => openDet(
+      "Mom's Food",
+      "There is nowhere else in Ocho Rios — possibly all of Jamaica — where you will eat like this. Miss Gloria has been cooking out of this little kitchen for 30 years. The curry goat is life-changing, the rice and peas are perfectly seasoned, and her rum cake appears without warning and disappears in minutes. Cash only, portions are enormous, and she will absolutely make you feel like family.",
+      "Behind the market, near the old clock, Ocho Rios", "Mom's Food", '#D81B60', 5));
+    addCard("Mom's Food",
+      "Miss Gloria's legendary curry goat and rum cake. 30 years running.",
+      "Behind the market, Ocho Rios", "Mom's Food", '#D81B60', 5);
 
     // ─── SERVICES ────────────────────────────────────────────────────────────
 
     map.addSource('service-1', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.101947,18.409395],[-77.101651,18.409559],[-77.101766,18.409727],[-77.102044,18.409531],[-77.101947,18.409395]]] } } });
     map.addLayer({ id: 'service-1-layer', type: 'fill-extrusion', source: 'service-1', paint: { 'fill-extrusion-color': '#2196F3', 'fill-extrusion-height': 18, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'service-1-layer', () => openDet('Service 1', '', '', 'Services', '#2196F3'));
-    addCard('Service 1', '', '', 'Services', '#2196F3');
+    map.on('click', 'service-1-layer', () => openDet(
+      'Ocho Rios Pharmacy',
+      'Well-stocked community pharmacy open 7 days a week. Carries prescription medications, sun care, insect repellent, and a wide range of over-the-counter remedies. Pharmacist on duty speaks English and Spanish.',
+      '10 Town Centre Plaza, Ocho Rios', 'Services', '#2196F3', 4));
+    addCard('Ocho Rios Pharmacy',
+      'Open 7 days, prescriptions, sun care, bilingual pharmacist.',
+      '10 Town Centre Plaza, Ocho Rios', 'Services', '#2196F3', 4);
 
     map.addSource('service-2', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.101486,18.409531],[-77.101082,18.409773],[-77.10107,18.409776],[-77.101268,18.410016],[-77.10166,18.409782],[-77.101486,18.409531]]] } } });
     map.addLayer({ id: 'service-2-layer', type: 'fill-extrusion', source: 'service-2', paint: { 'fill-extrusion-color': '#2196F3', 'fill-extrusion-height': 18, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'service-2-layer', () => openDet('Service 2', '', '', 'Services', '#2196F3'));
-    addCard('Service 2', '', '', 'Services', '#2196F3');
+    map.on('click', 'service-2-layer', () => openDet(
+      'Island FX Currency Exchange',
+      'Competitive exchange rates for USD, GBP, CAD, and EUR. No commission on exchanges over J$10,000. Also offers Western Union transfers, mobile top-ups, and travel SIM cards. Fast and hassle-free service.',
+      '3 Harbour View Street, Ocho Rios', 'Services', '#2196F3', 4));
+    addCard('Island FX Currency Exchange',
+      'Competitive rates, no commission, Western Union, travel SIM cards.',
+      '3 Harbour View Street, Ocho Rios', 'Services', '#2196F3', 4);
 
     map.addSource('service-3', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [[[-77.10221,18.409261],[-77.102189,18.409206],[-77.102143,18.409179],[-77.101978,18.409272],[-77.102031,18.409367],[-77.10221,18.409261]]] } } });
     map.addLayer({ id: 'service-3-layer', type: 'fill-extrusion', source: 'service-3', paint: { 'fill-extrusion-color': '#2196F3', 'fill-extrusion-height': 18, 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1.0 } });
-    map.on('click', 'service-3-layer', () => openDet('Service 3', '', '', 'Services', '#2196F3'));
-    addCard('Service 3', '', '', 'Services', '#2196F3');
+    map.on('click', 'service-3-layer', () => openDet(
+      'Caribbean Connect Internet Cafe',
+      'High-speed Wi-Fi, printing, scanning, and international calling stations. Friendly staff happy to help with local bookings, transport arrangements, or printing boarding passes. Open daily 7am–10pm.',
+      '27 Digital Square, Ocho Rios', 'Services', '#2196F3', 3));
+    addCard('Caribbean Connect Internet Cafe',
+      'High-speed Wi-Fi, printing, international calling, daily 7am–10pm.',
+      '27 Digital Square, Ocho Rios', 'Services', '#2196F3', 3);
 
     // ─── TOURS & ATTRACTIONS ─────────────────────────────────────────────────
     // Add tours addSource/addLayer blocks here
