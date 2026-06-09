@@ -59,6 +59,7 @@
     #det-stars{font-size:15px;letter-spacing:2px;margin-bottom:8px;min-height:20px}
     #det-desc{font-size:13px;line-height:1.7;color:#9a8870;font-weight:300}
     #det-addr{font-size:12px;color:#b0a090;margin-top:6px;}
+    #det-img{width:100%;border-radius:14px;object-fit:cover;max-height:160px;display:none;margin-bottom:10px;}
     .mapboxgl-ctrl-bottom-left,.mapboxgl-ctrl-bottom-right,.mapboxgl-ctrl-top-right{display:none!important}
   </style>
 </head>
@@ -77,6 +78,7 @@
       <div id="detail-handle-bar"></div>
       <button id="detail-close" onclick="closeDet()">✕</button>
     </div>
+    <img id="det-img" src="" alt=""/>
     <div id="det-cat"></div>
     <div id="det-name"></div>
     <div id="det-stars"></div>
@@ -121,7 +123,10 @@
     document.getElementById('card-row').appendChild(card);
   }
 
-  function openDet(name, desc, addr, catLabel, catColor, stars) {
+  function openDet(name, desc, addr, catLabel, catColor, stars, img) {
+    const detImg = document.getElementById('det-img');
+    if (img) { detImg.src = img; detImg.style.display = 'block'; }
+    else { detImg.src = ''; detImg.style.display = 'none'; }
     document.getElementById('det-cat').style.color = catColor;
     document.getElementById('det-cat').textContent  = catLabel;
     document.getElementById('det-name').textContent = name;
@@ -409,7 +414,7 @@
     map.on('click', 'moms-food-layer', () => openDet(
       "Mom's Food",
       "There is nowhere else in Ocho Rios — possibly all of Jamaica — where you will eat like this. Miss Gloria has been cooking out of this little kitchen for 30 years. The curry goat is life-changing, the rice and peas are perfectly seasoned, and her rum cake appears without warning and disappears in minutes. Cash only, portions are enormous, and she will absolutely make you feel like family.",
-      "Behind the market, near the old clock, Ocho Rios", "Mom's Food", '#D81B60', 5));
+      "Behind the market, near the old clock, Ocho Rios", "Mom's Food", '#D81B60', 5, 'momsfood.png'));
     addCard("Mom's Food",
       "Miss Gloria's legendary curry goat and rum cake. 30 years running.",
       "Behind the market, Ocho Rios", "Mom's Food", '#D81B60', 5);
